@@ -1,0 +1,65 @@
+前后端跨域处理：
+	1.设置允许跨域请求头
+	app.all("*",function(req,res,next){
+	    //设置允许跨域的域名，*代表允许任意域名跨域
+	    res.header("Access-Control-Allow-Origin","*");
+	})
+	2.代理跨域，因为客户端与服务端存在同源策略，能否用服务端请求服务端
+		打开vue中的config/index.js，找到proxyTable属性，这个属性就是代理属性
+
+使用后台的session本地储存记录登录者信息
+		使用方法：
+			1.下载express-session框架
+			2.在app.js中使用use加载session框架并设置默认配置
+				app.use(session({
+					name:"fcht",// 存储session_id的cookie的名称   
+								//  默认 connect.sid
+					secret:"fcht",// 加密的字符串   必须的
+					cookie:{
+						maxAge:3600000 // 设置cookie的失效时间 3600000
+					},
+					resave:false,//每次请求是否都重新设置session
+					saveUninitialized:false // 每次请求是否初始化session
+				}))
+			3.在路由中直接使用req.session.屬性名 = 要记录的值
+			
+注册功能参数：
+	tokenId             唯一值，用来索引的
+	userName 			账号
+	passWord 			密码
+	phone    			手机号 （11位中国大陆手机号）
+	nickName 			昵称
+	trueName 			真实姓名
+	identificationCard  身份证号
+	headerPic 			头像
+后台注册会遇到的问题：
+		1.默认头像 暂时不做
+		2.重名
+		3.tokenId
+
+		注意手机报错信息： Cannot set headers after they are sent to the client 
+			这个报错的意思是send不能重复触发
+			
+文章数据库：
+		title 		文章标题
+		main 		文章内容
+		authorNick 	文章作者
+		createTime  文章发布日期
+		authorId 	作者tokenId
+		articleId 	文章Id  评论时需要用到
+		
+评论列表数据
+	createTime 		评论时间
+	main 			评论内容
+	discussNick 	评论人昵称
+	okNum 			点赞数
+	discussId 		评论唯一id
+	articleId 		评论文章id
+	tokenId 		评论人id
+	
+回复数据建立在回复列表中 新建回复数据库
+	  回复者是已知的 from  回复者             tokenId
+	  回复目标       to    该条评论发布者的id toId
+	  所属评论的id   discussId
+	  回复唯一的id   hfId
+	  回复时间       createTime
